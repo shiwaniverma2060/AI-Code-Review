@@ -42,7 +42,14 @@ function App() {
       setReview(response.data)
       setTimeout(() => reviewRef.current?.scrollIntoView({ behavior: 'smooth' }), 100)
     } catch (err) {
-      setError('Failed to get review. Please check your connection and try again.')
+      if (err.response?.status === 429) {
+        setError('⚡ AI quota reached. Please wait a moment and try again.')
+      } else if (err.response?.status === 500) {
+        setError('🔴 Server error. Please try again in a few seconds.')
+      } else {
+        setError('Failed to get review. Please check your connection and try again.')
+      }
+    }
     } finally {
       setIsLoading(false)
     }
